@@ -1,198 +1,226 @@
--- MacUI Library (Finder-style, like WindUI)
--- ใช้ loadstring(game:HttpGet("..."))()
-
+--// MacUI Library
 local MacUI = {}
-MacUI.__index = MacUI
 
+-- Services
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
 local HttpService = game:GetService("HttpService")
+local LocalPlayer = Players.LocalPlayer
 
-local player = Players.LocalPlayer
+-- Helper
+local function create(class, props)
+    local obj = Instance.new(class)
+    for i, v in pairs(props) do
+        obj[i] = v
+    end
+    return obj
+end
 
--- Create new Window
+--// Window
 function MacUI:Window(config)
-    config = config or {}
-    local self = setmetatable({}, MacUI)
+    local self = {}
+    self.Tabs = {}
 
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "MacUI"
-    gui.ResetOnSpawn = false
-    gui.Parent = player:WaitForChild("PlayerGui")
-    self.Gui = gui
+    local ScreenGui = create("ScreenGui", {
+        Parent = LocalPlayer:WaitForChild("PlayerGui"),
+        Name = "MacUI_" .. HttpService:GenerateGUID(false),
+        ZIndexBehavior = Enum.ZIndexBehavior.Global
+    })
 
-    -- Window
-    local window = Instance.new("Frame")
-    window.Size = config.Size or UDim2.new(0, 520, 0, 340)
-    window.Position = UDim2.new(0.5, -260, 0.4, -170)
-    window.AnchorPoint = Vector2.new(0.5, 0.5)
-    window.BackgroundColor3 = Color3.fromRGB(245, 246, 250)
-    window.BorderSizePixel = 0
-    window.Parent = gui
-    self.Window = window
-
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 14)
-    corner.Parent = window
+    local MainFrame = create("Frame", {
+        Parent = ScreenGui,
+        Size = config.Size or UDim2.new(0, 520, 0, 340),
+        BackgroundColor3 = Color3.fromRGB(245, 245, 245),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.5, -260, 0.5, -170)
+    })
+    MainFrame.ClipsDescendants = true
+    create("UICorner", { Parent = MainFrame, CornerRadius = UDim.new(0, 12) })
+    create("UIStroke", { Parent = MainFrame, Thickness = 1.2, Color = Color3.fromRGB(200, 200, 200) })
 
     -- Titlebar
-    local titlebar = Instance.new("Frame")
-    titlebar.Size = UDim2.new(1, 0, 0, 40)
-    titlebar.BackgroundTransparency = 1
-    titlebar.Parent = window
+    local TitleBar = create("Frame", {
+        Parent = MainFrame,
+        Size = UDim2.new(1, 0, 0, 28),
+        BackgroundColor3 = Color3.fromRGB(235, 235, 235),
+        BorderSizePixel = 0
+    })
+    create("UICorner", { Parent = TitleBar, CornerRadius = UDim.new(0, 12) })
 
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(1, 0, 1, 0)
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.Text = config.Title or "Finder — MacUI"
-    titleLabel.Font = Enum.Font.SourceSansSemibold
-    titleLabel.TextSize = 16
-    titleLabel.TextColor3 = Color3.fromRGB(45, 50, 56)
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Center
-    titleLabel.Parent = titlebar
+    -- Traffic Lights (Close, Min, Max)
+    local TrafficHolder = create("Frame", {
+        Parent = TitleBar,
+        Size = UDim2.new(0, 60, 0, 20),
+        Position = UDim2.new(0, 10, 0, 4),
+        BackgroundTransparency = 1
+    })
 
-    -- Tabs holder
-    local tabs = Instance.new("Folder")
-    tabs.Name = "Tabs"
-    tabs.Parent = window
-    self.Tabs = tabs
+    local colors = { Color3.fromRGB(255, 95, 87), Color3.fromRGB(255, 189, 46), Color3.fromRGB(39, 201, 63) }
+    for i, c in ipairs(colors) do
+        local dot = create("Frame", {
+            Parent = TrafficHolder,
+            Size = UDim2.new(0, 12, 0, 12),
+            Position = UDim2.new(0, (i - 1) * 18, 0, 0),
+            BackgroundColor3 = c,
+            BorderSizePixel = 0
+        })
+        create("UICorner", { Parent = dot, CornerRadius = UDim.new(1, 0) })
+    end
+
+    -- Tab Buttons Holder
+    local TabButtons = create("Frame", {
+        Parent = TitleBar,
+        Size = UDim2.new(1, -80, 1, 0),
+        Position = UDim2.new(0, 80, 0, 0),
+        BackgroundTransparency = 1
+    })
+
+    local TabLayout = create("UIListLayout", {
+        Parent = TabButtons,
+        FillDirection = Enum.FillDirection.Horizontal,
+        HorizontalAlignment = Enum.HorizontalAlignment.Left,
+        VerticalAlignment = Enum.VerticalAlignment.Center,
+        Padding = UDim.new(0, 12)
+    })
+
+    -- Content Holder
+    local ContentFrame = create("Frame", {
+        Parent = MainFrame,
+        Size = UDim2.new(1, 0, 1, -28),
+        Position = UDim2.new(0, 0, 0, 28),
+        BackgroundColor3 = Color3.fromRGB(250, 250, 250),
+        BorderSizePixel = 0
+    })
+
+    -- Tab Function
+    function self:Tab(name)
+        local tab = {}
+        local Button = create("TextButton", {
+            Parent = TabButtons,
+            Size = UDim2.new(0, 80, 1, 0),
+            BackgroundTransparency = 1,
+            Text = name,
+            TextColor3 = Color3.fromRGB(80, 80, 80),
+            Font = Enum.Font.SourceSansBold,
+            TextSize = 14
+        })
+
+        local TabPage = create("ScrollingFrame", {
+            Parent = ContentFrame,
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 1,
+            ScrollBarThickness = 4,
+            Visible = false
+        })
+        local layout = create("UIListLayout", {
+            Parent = TabPage,
+            Padding = UDim.new(0, 8),
+            FillDirection = Enum.FillDirection.Vertical,
+            HorizontalAlignment = Enum.HorizontalAlignment.Left,
+            VerticalAlignment = Enum.VerticalAlignment.Top
+        })
+        create("UIPadding", { Parent = TabPage, PaddingTop = UDim.new(0, 10), PaddingLeft = UDim.new(0, 10) })
+
+        -- Show/Hide logic
+        Button.MouseButton1Click:Connect(function()
+            for _, t in pairs(self.Tabs) do
+                t.Page.Visible = false
+            end
+            TabPage.Visible = true
+        end)
+
+        tab.Page = TabPage
+        tab.Button = Button
+        table.insert(self.Tabs, tab)
+
+        -- Default show first tab
+        if #self.Tabs == 1 then
+            TabPage.Visible = true
+        end
+
+        -- Elements
+        function tab:Button(cfg)
+            local btn = create("TextButton", {
+                Parent = TabPage,
+                Size = UDim2.new(1, -20, 0, 30),
+                BackgroundColor3 = Color3.fromRGB(240, 240, 240),
+                BorderSizePixel = 0,
+                Text = cfg.Title,
+                TextColor3 = Color3.fromRGB(50, 50, 50),
+                Font = Enum.Font.SourceSans,
+                TextSize = 14
+            })
+            create("UICorner", { Parent = btn, CornerRadius = UDim.new(0, 6) })
+            btn.MouseButton1Click:Connect(cfg.Callback)
+            return btn
+        end
+
+        function tab:Toggle(cfg)
+            local holder = create("Frame", {
+                Parent = TabPage,
+                Size = UDim2.new(1, -20, 0, 30),
+                BackgroundTransparency = 1
+            })
+            local btn = create("TextButton", {
+                Parent = holder,
+                Size = UDim2.new(1, -40, 1, 0),
+                BackgroundColor3 = Color3.fromRGB(240, 240, 240),
+                BorderSizePixel = 0,
+                Text = cfg.Title,
+                TextColor3 = Color3.fromRGB(50, 50, 50),
+                Font = Enum.Font.SourceSans,
+                TextSize = 14
+            })
+            create("UICorner", { Parent = btn, CornerRadius = UDim.new(0, 6) })
+
+            local toggleState = cfg.Default or false
+            local indicator = create("Frame", {
+                Parent = holder,
+                Size = UDim2.new(0, 20, 0, 20),
+                Position = UDim2.new(1, -25, 0.5, -10),
+                BackgroundColor3 = toggleState and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0),
+                BorderSizePixel = 0
+            })
+            create("UICorner", { Parent = indicator, CornerRadius = UDim.new(1, 0) })
+
+            btn.MouseButton1Click:Connect(function()
+                toggleState = not toggleState
+                indicator.BackgroundColor3 = toggleState and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
+                if cfg.Callback then cfg.Callback(toggleState) end
+            end)
+
+            return holder
+        end
+
+        function tab:Input(cfg)
+            local input = create("TextBox", {
+                Parent = TabPage,
+                Size = UDim2.new(1, -20, 0, 30),
+                BackgroundColor3 = Color3.fromRGB(240, 240, 240),
+                BorderSizePixel = 0,
+                PlaceholderText = cfg.Placeholder or "Type...",
+                Text = cfg.Default or "",
+                TextColor3 = Color3.fromRGB(50, 50, 50),
+                Font = Enum.Font.SourceSans,
+                TextSize = 14
+            })
+            create("UICorner", { Parent = input, CornerRadius = UDim.new(0, 6) })
+            input.FocusLost:Connect(function()
+                if cfg.Callback then cfg.Callback(input.Text) end
+            end)
+            return input
+        end
+
+        return tab
+    end
 
     return self
 end
 
--- Add Tab
-function MacUI:Tab(name)
-    local tab = {}
-    tab.Name = name
-    tab.Elements = {}
-
-    -- Container
-    local frame = Instance.new("Frame")
-    frame.Name = name
-    frame.Size = UDim2.new(1, -20, 1, -60)
-    frame.Position = UDim2.new(0, 10, 0, 50)
-    frame.BackgroundTransparency = 1
-    frame.Visible = #self.Tabs:GetChildren() == 0 -- show only first tab
-    frame.Parent = self.Tabs
-
-    tab.Frame = frame
-
-    -- Switch tab system
-    for _, other in ipairs(self.Tabs:GetChildren()) do
-        if other ~= frame then
-            other.Visible = false
-        end
-    end
-
-    function tab:Show()
-        for _, f in ipairs(self.Frame.Parent:GetChildren()) do
-            f.Visible = false
-        end
-        self.Frame.Visible = true
-    end
-
-    -- Button
-    function tab:Button(cfg)
-        cfg = cfg or {}
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0, 200, 0, 36)
-        btn.BackgroundColor3 = Color3.fromRGB(247, 248, 250)
-        btn.Text = cfg.Title or "Button"
-        btn.Font = Enum.Font.SourceSans
-        btn.TextSize = 14
-        btn.TextColor3 = Color3.fromRGB(45, 50, 56)
-        btn.Parent = frame
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = btn
-
-        btn.MouseButton1Click:Connect(function()
-            if cfg.Callback then
-                pcall(cfg.Callback)
-            end
-        end)
-        return btn
-    end
-
-    -- Toggle
-    function tab:Toggle(cfg)
-        cfg = cfg or {}
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0, 200, 0, 36)
-        btn.BackgroundColor3 = Color3.fromRGB(247, 248, 250)
-        btn.Text = cfg.Title or "Toggle"
-        btn.Font = Enum.Font.SourceSans
-        btn.TextSize = 14
-        btn.TextColor3 = Color3.fromRGB(45, 50, 56)
-        btn.Parent = frame
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = btn
-
-        local state = cfg.Default or false
-        btn.Text = (cfg.Title or "Toggle") .. ": " .. tostring(state)
-
-        btn.MouseButton1Click:Connect(function()
-            state = not state
-            btn.Text = (cfg.Title or "Toggle") .. ": " .. tostring(state)
-            if cfg.Callback then
-                pcall(cfg.Callback, state)
-            end
-        end)
-        return btn
-    end
-
-    -- Input
-    function tab:Input(cfg)
-        cfg = cfg or {}
-        local box = Instance.new("TextBox")
-        box.Size = UDim2.new(0, 200, 0, 36)
-        box.PlaceholderText = cfg.Placeholder or "Type here..."
-        box.Text = cfg.Default or ""
-        box.Font = Enum.Font.SourceSans
-        box.TextSize = 14
-        box.TextColor3 = Color3.fromRGB(45, 50, 56)
-        box.BackgroundColor3 = Color3.fromRGB(247, 248, 250)
-        box.Parent = frame
-
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = box
-
-        box.FocusLost:Connect(function()
-            if cfg.Callback then
-                pcall(cfg.Callback, box.Text)
-            end
-        end)
-        return box
-    end
-
-    return tab
-end
-
 -- Notify
 function MacUI:Notify(cfg)
-    cfg = cfg or {}
-    local note = Instance.new("TextLabel")
-    note.Size = UDim2.new(0, 260, 0, 50)
-    note.Position = UDim2.new(0.5, -130, 0.05, 0)
-    note.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    note.Text = (cfg.Title or "Notify") .. " - " .. (cfg.Content or "")
-    note.Font = Enum.Font.SourceSans
-    note.TextSize = 14
-    note.TextColor3 = Color3.fromRGB(45, 50, 56)
-    note.Parent = self.Gui
-
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = note
-
-    task.delay(cfg.Duration or 3, function()
-        note:Destroy()
-    end)
+    local msg = Instance.new("Message", workspace)
+    msg.Text = cfg.Title .. " — " .. cfg.Content
+    game:GetService("Debris"):AddItem(msg, cfg.Duration or 3)
 end
 
 return MacUI
