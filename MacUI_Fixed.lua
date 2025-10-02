@@ -630,7 +630,7 @@ function MacUI:Window(config)
         PaddingBottom = UDim.new(0, 8)
     })
 
-    -- Content Holder (FIXED - เพิ่ม UICorner)
+    -- Content Holder
     local ContentFrame = create("Frame", {
         Parent = MainFrame,
         Size = UDim2.new(1, -160, 1, -32),
@@ -664,21 +664,22 @@ function MacUI:Window(config)
 
     -- Tab Function (FIXED)
     function self:Tab(name, icon)
-    local tab = {}
-    local windowSelf = self -- เพิ่มบรรทัดนี้
+        local tab = {}
+        local windowSelf = self
 
-    local Button = create("TextButton", {
-        Parent = TabButtons,
-        Size = UDim2.new(1, -10, 0, 36),
-        BackgroundColor3 = currentTheme.TabInactive,
-        BorderSizePixel = 0,
-        Text = "",
-        TextColor3 = currentTheme.TextInactive,
-        Font = Enum.Font.GothamMedium,
-        TextSize = 13,
-        AutoButtonColor = false
-    })
-    create("UICorner", { Parent = Button, CornerRadius = UDim.new(0, 8) })
+        local Button = create("TextButton", {
+            Parent = TabButtons,
+            Size = UDim2.new(1, -10, 0, 36),
+            BackgroundColor3 = currentTheme.TabInactive,
+            BorderSizePixel = 0,
+            Text = "",
+            TextColor3 = currentTheme.TextInactive,
+            Font = Enum.Font.GothamMedium,
+            TextSize = 13,
+            AutoButtonColor = false,
+            ZIndex = 3
+        })
+        create("UICorner", { Parent = Button, CornerRadius = UDim.new(0, 8) })
         
         -- Icon
         if icon then
@@ -709,7 +710,7 @@ function MacUI:Window(config)
             Button.Text = name
         end
 
-        -- ScrollingFrame (FIXED - เพิ่ม Name property ตามชื่อ Tab)
+        -- ScrollingFrame
         local TabPage = create("ScrollingFrame", {
             Parent = ContentFrame,
             Name = name .. "_Page",
@@ -738,36 +739,37 @@ function MacUI:Window(config)
             PaddingBottom = UDim.new(0, 15)
         })
 
-        -- Tab switching (FIXED - แก้ไข logic ให้ชัดเจน)
+        -- Tab switching (FIXED)
         Button.MouseButton1Click:Connect(function()
-        for _, t in pairs(windowSelf.Tabs) do
-            t.Page.Visible = false
-            tween(t.Button, 0.2, { BackgroundColor3 = currentTheme.TabInactive })
+            print("Tab Clicked:", name)
+            for _, t in pairs(windowSelf.Tabs) do
+                t.Page.Visible = false
+                tween(t.Button, 0.2, { BackgroundColor3 = currentTheme.TabInactive })
 
-            if t.Label then
-                t.Label.TextColor3 = currentTheme.TextInactive
+                if t.Label then
+                    t.Label.TextColor3 = currentTheme.TextInactive
+                else
+                    t.Button.TextColor3 = currentTheme.TextInactive
+                end
+
+                if t.Icon then
+                    t.Icon.ImageColor3 = currentTheme.TextInactive
+                end
+            end
+
+            TabPage.Visible = true
+            tween(Button, 0.2, { BackgroundColor3 = currentTheme.TabActive })
+
+            if tab.Label then
+                tab.Label.TextColor3 = currentTheme.TextActive
             else
-                t.Button.TextColor3 = currentTheme.TextInactive
+                Button.TextColor3 = currentTheme.TextActive
             end
 
-            if t.Icon then
-                t.Icon.ImageColor3 = currentTheme.TextInactive
+            if tab.Icon then
+                tab.Icon.ImageColor3 = currentTheme.TextActive
             end
-        end
-
-        TabPage.Visible = true
-        tween(Button, 0.2, { BackgroundColor3 = currentTheme.TabActive })
-
-        if tab.Label then
-            tab.Label.TextColor3 = currentTheme.TextActive
-        else
-            Button.TextColor3 = currentTheme.TextActive
-        end
-
-        if tab.Icon then
-            tab.Icon.ImageColor3 = currentTheme.TextActive
-        end
-    end)
+        end)
         
         Button.MouseEnter:Connect(function()
             if not TabPage.Visible then
@@ -778,8 +780,7 @@ function MacUI:Window(config)
                 )})
             end
         end)
-    end 
-    
+        
         Button.MouseLeave:Connect(function()
             if not TabPage.Visible then
                 tween(Button, 0.15, { BackgroundColor3 = currentTheme.TabInactive })
@@ -841,67 +842,74 @@ function MacUI:Window(config)
         function tab:Label(cfg)
             local label = create("TextLabel", {
                 Parent = TabPage,
-                Size = UDim2.new(1, -20, 0, 28),
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                BorderSizePixel = 0,
-                Text = cfg.Text or "",
+                Size = UDim2.new(1, -20, 0, 0),
+                BackgroundTransparency = 1,
+                Text = cfg.Text or "Label",
                 TextColor3 = Color3.fromRGB(50, 50, 55),
-                Font = Enum.Font.GothamMedium,
+                Font = Enum.Font.Gotham,
                 TextSize = 14,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                TextWrapped = true
+                TextWrapped = true,
+                AutomaticSize = Enum.AutomaticSize.Y
             })
-            create("UICorner", { Parent = label, CornerRadius = UDim.new(0, 8) })
-            create("UIPadding", { Parent = label, PaddingLeft = UDim.new(0, 15) })
             
             return label
         end
         
         function tab:Paragraph(cfg)
-            local paragraph = create("TextLabel", {
+            local holder = create("Frame", {
                 Parent = TabPage,
                 Size = UDim2.new(1, -20, 0, 0),
                 BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                 BorderSizePixel = 0,
-                Text = cfg.Text or "",
-                TextColor3 = Color3.fromRGB(70, 70, 75),
-                Font = Enum.Font.Gotham,
-                TextSize = 13,
+                AutomaticSize = Enum.AutomaticSize.Y
+            })
+            create("UICorner", { Parent = holder, CornerRadius = UDim.new(0, 8) })
+            
+            local titleLabel = create("TextLabel", {
+                Parent = holder,
+                Size = UDim2.new(1, -20, 0, 0),
+                Position = UDim2.new(0, 10, 0, 10),
+                BackgroundTransparency = 1,
+                Text = cfg.Title or "Title",
+                TextColor3 = Color3.fromRGB(50, 50, 55),
+                Font = Enum.Font.GothamBold,
+                TextSize = 15,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,
                 AutomaticSize = Enum.AutomaticSize.Y
             })
-            create("UICorner", { Parent = paragraph, CornerRadius = UDim.new(0, 8) })
+            
+            local contentLabel = create("TextLabel", {
+                Parent = holder,
+                Size = UDim2.new(1, -20, 0, 0),
+                Position = UDim2.new(0, 10, 0, 35),
+                BackgroundTransparency = 1,
+                Text = cfg.Content or "Content",
+                TextColor3 = Color3.fromRGB(100, 100, 105),
+                Font = Enum.Font.Gotham,
+                TextSize = 13,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                TextWrapped = true,
+                AutomaticSize = Enum.AutomaticSize.Y
+            })
+            
             create("UIPadding", { 
-                Parent = paragraph, 
-                PaddingLeft = UDim.new(0, 15),
-                PaddingRight = UDim.new(0, 15),
+                Parent = holder, 
                 PaddingTop = UDim.new(0, 10),
                 PaddingBottom = UDim.new(0, 10)
             })
             
-            return paragraph
+            return holder
         end
         
-        function tab:Divider()
-            local divider = create("Frame", {
-                Parent = TabPage,
-                Size = UDim2.new(1, -20, 0, 1),
-                BackgroundColor3 = Color3.fromRGB(220, 220, 225),
-                BorderSizePixel = 0
-            })
-            
-            return divider
-        end
-
         function tab:Button(cfg)
             local btn = create("TextButton", {
                 Parent = TabPage,
                 Size = UDim2.new(1, -20, 0, 38),
                 BackgroundColor3 = currentTheme.Accent,
                 BorderSizePixel = 0,
-                Text = cfg.Title,
+                Text = cfg.Title or "Button",
                 TextColor3 = Color3.fromRGB(255, 255, 255),
                 Font = Enum.Font.GothamMedium,
                 TextSize = 14,
@@ -910,31 +918,27 @@ function MacUI:Window(config)
             create("UICorner", { Parent = btn, CornerRadius = UDim.new(0, 8) })
             
             btn.MouseEnter:Connect(function()
-                local darker = Color3.fromRGB(
-                    math.max(currentTheme.Accent.R * 255 - 10, 0),
-                    math.max(currentTheme.Accent.G * 255 - 10, 0),
-                    math.max(currentTheme.Accent.B * 255 - 10, 0)
-                )
-                tween(btn, 0.2, { BackgroundColor3 = darker })
+                tween(btn, 0.2, { BackgroundColor3 = Color3.new(
+                    currentTheme.Accent.R * 0.85,
+                    currentTheme.Accent.G * 0.85,
+                    currentTheme.Accent.B * 0.85
+                )})
             end)
             
             btn.MouseLeave:Connect(function()
                 tween(btn, 0.2, { BackgroundColor3 = currentTheme.Accent })
             end)
             
-            btn.MouseButton1Down:Connect(function()
-                tween(btn, 0.1, { Size = UDim2.new(1, -20, 0, 36) })
+            btn.MouseButton1Click:Connect(function()
+                if cfg.Callback then cfg.Callback() end
             end)
             
-            btn.MouseButton1Up:Connect(function()
-                tween(btn, 0.1, { Size = UDim2.new(1, -20, 0, 38) })
-            end)
-            
-            btn.MouseButton1Click:Connect(cfg.Callback)
             return btn
         end
-
+        
         function tab:Toggle(cfg)
+            local toggleState = cfg.Default or false
+            
             local holder = create("Frame", {
                 Parent = TabPage,
                 Size = UDim2.new(1, -20, 0, 38),
@@ -945,22 +949,20 @@ function MacUI:Window(config)
             
             local label = create("TextLabel", {
                 Parent = holder,
-                Size = UDim2.new(1, -60, 1, 0),
+                Size = UDim2.new(1, -70, 1, 0),
                 Position = UDim2.new(0, 15, 0, 0),
                 BackgroundTransparency = 1,
-                Text = cfg.Title,
+                Text = cfg.Title or "Toggle",
                 TextColor3 = Color3.fromRGB(50, 50, 55),
                 Font = Enum.Font.GothamMedium,
                 TextSize = 14,
                 TextXAlignment = Enum.TextXAlignment.Left
             })
-
-            local toggleState = cfg.Default or false
             
             local toggleBg = create("Frame", {
                 Parent = holder,
-                Size = UDim2.new(0, 48, 0, 28),
-                Position = UDim2.new(1, -58, 0.5, -14),
+                Size = UDim2.new(0, 50, 0, 28),
+                Position = UDim2.new(1, -60, 0.5, -14),
                 BackgroundColor3 = toggleState and Color3.fromRGB(52, 199, 89) or Color3.fromRGB(200, 200, 205),
                 BorderSizePixel = 0
             })
@@ -1516,16 +1518,6 @@ function MacUI:Window(config)
                 end
             end)
             
-            if cfg.Callback then
-                UserInputService.InputBegan:Connect(function(input, gameProcessed)
-                    if not gameProcessed and not waitingForKey then
-                        if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode.Name == currentKey then
-                            cfg.Callback(currentKey)
-                        end
-                    end
-                end)
-            end
-            
             if self.ConfigData and cfg.Flag and self.ConfigData[cfg.Flag] then
                 currentKey = self.ConfigData[cfg.Flag]
                 keyBtn.Text = currentKey
@@ -1541,48 +1533,46 @@ function MacUI:Window(config)
             local holder = create("Frame", {
                 Parent = TabPage,
                 Size = UDim2.new(1, -20, 0, 38),
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                BorderSizePixel = 0
-            })
-            create("UICorner", { Parent = holder, CornerRadius = UDim.new(0, 8) })
-            
-            local label = create("TextLabel", {
-                Parent = holder,
-                Size = UDim2.new(1, -60, 1, 0),
-                Position = UDim2.new(0, 15, 0, 0),
                 BackgroundTransparency = 1,
-                Text = cfg.Title or "Color",
-                TextColor3 = Color3.fromRGB(50, 50, 55),
-                Font = Enum.Font.GothamMedium,
-                TextSize = 14,
-                TextXAlignment = Enum.TextXAlignment.Left
+                ZIndex = 10
             })
             
             local colorBtn = create("TextButton", {
                 Parent = holder,
-                Size = UDim2.new(0, 40, 0, 28),
-                Position = UDim2.new(1, -50, 0.5, -14),
+                Size = UDim2.new(0, 50, 0, 30),
+                Position = UDim2.new(1, -55, 0, 4),
                 BackgroundColor3 = currentColor,
                 BorderSizePixel = 0,
                 Text = "",
                 AutoButtonColor = false
             })
-            create("UICorner", { Parent = colorBtn, CornerRadius = UDim.new(0, 6) })
+            create("UICorner", { Parent = colorBtn, CornerRadius = UDim.new(0, 8) })
             create("UIStroke", { 
                 Parent = colorBtn, 
                 Thickness = 2, 
                 Color = Color3.fromRGB(220, 220, 225)
             })
             
+            local label = create("TextLabel", {
+                Parent = holder,
+                Size = UDim2.new(1, -70, 0, 38),
+                Position = UDim2.new(0, 15, 0, 0),
+                BackgroundTransparency = 1,
+                Text = cfg.Title or "Color Picker",
+                TextColor3 = Color3.fromRGB(50, 50, 55),
+                Font = Enum.Font.GothamMedium,
+                TextSize = 14,
+                TextXAlignment = Enum.TextXAlignment.Left
+            })
+            
             local pickerFrame = create("Frame", {
                 Parent = holder,
-                Size = UDim2.new(0, 0, 0, 0),
+                Size = UDim2.new(1, 0, 0, 0),
                 Position = UDim2.new(0, 0, 0, 42),
                 BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                 BorderSizePixel = 0,
                 ClipsDescendants = true,
-                Visible = false,
-                ZIndex = 20
+                Visible = false
             })
             create("UICorner", { Parent = pickerFrame, CornerRadius = UDim.new(0, 8) })
             create("UIStroke", { 
@@ -1593,24 +1583,18 @@ function MacUI:Window(config)
             
             local colorGrid = create("Frame", {
                 Parent = pickerFrame,
-                Size = UDim2.new(1, -10, 1, -10),
-                Position = UDim2.new(0, 5, 0, 5),
+                Size = UDim2.new(1, -20, 1, -20),
+                Position = UDim2.new(0, 10, 0, 10),
                 BackgroundTransparency = 1
             })
             
             create("UIGridLayout", {
                 Parent = colorGrid,
-                CellSize = UDim2.new(0, 30, 0, 30),
-                CellPadding = UDim2.new(0, 4, 0, 4),
+                CellSize = UDim2.new(0, 28, 0, 28),
+                CellPadding = UDim2.new(0, 6, 0, 6),
                 FillDirection = Enum.FillDirection.Horizontal,
                 HorizontalAlignment = Enum.HorizontalAlignment.Left,
                 VerticalAlignment = Enum.VerticalAlignment.Top
-            })
-            
-            create("UIPadding", { 
-                Parent = colorGrid, 
-                PaddingTop = UDim.new(0, 4),
-                PaddingLeft = UDim.new(0, 4)
             })
             
             local presetColors = {
@@ -1618,8 +1602,8 @@ function MacUI:Window(config)
                 Color3.fromRGB(52, 199, 89), Color3.fromRGB(0, 199, 190), Color3.fromRGB(48, 176, 199),
                 Color3.fromRGB(50, 173, 230), Color3.fromRGB(0, 122, 255), Color3.fromRGB(88, 86, 214),
                 Color3.fromRGB(175, 82, 222), Color3.fromRGB(255, 45, 85), Color3.fromRGB(162, 132, 94),
-                Color3.fromRGB(142, 142, 147), Color3.fromRGB(99, 99, 102), Color3.fromRGB(58, 58, 60),
-                Color3.fromRGB(255, 255, 255), Color3.fromRGB(229, 229, 234), Color3.fromRGB(199, 199, 204)
+                Color3.fromRGB(255, 255, 255), Color3.fromRGB(200, 200, 205), Color3.fromRGB(150, 150, 155),
+                Color3.fromRGB(100, 100, 105), Color3.fromRGB(50, 50, 55), Color3.fromRGB(0, 0, 0)
             }
             
             for _, color in ipairs(presetColors) do
@@ -1675,7 +1659,7 @@ function MacUI:Window(config)
             
             return holder
         end
-
+        
         return tab
     end
 
