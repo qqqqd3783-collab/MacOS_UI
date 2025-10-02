@@ -664,20 +664,21 @@ function MacUI:Window(config)
 
     -- Tab Function (FIXED)
     function self:Tab(name, icon)
-        local tab = {}
-        
-        local Button = create("TextButton", {
-            Parent = TabButtons,
-            Size = UDim2.new(1, -10, 0, 36),
-            BackgroundColor3 = currentTheme.TabInactive,
-            BorderSizePixel = 0,
-            Text = "",
-            TextColor3 = currentTheme.TextInactive,
-            Font = Enum.Font.GothamMedium,
-            TextSize = 13,
-            AutoButtonColor = false
-        })
-        create("UICorner", { Parent = Button, CornerRadius = UDim.new(0, 8) })
+    local tab = {}
+    local windowSelf = self -- เพิ่มบรรทัดนี้
+
+    local Button = create("TextButton", {
+        Parent = TabButtons,
+        Size = UDim2.new(1, -10, 0, 36),
+        BackgroundColor3 = currentTheme.TabInactive,
+        BorderSizePixel = 0,
+        Text = "",
+        TextColor3 = currentTheme.TextInactive,
+        Font = Enum.Font.GothamMedium,
+        TextSize = 13,
+        AutoButtonColor = false
+    })
+    create("UICorner", { Parent = Button, CornerRadius = UDim.new(0, 8) })
         
         -- Icon
         if icon then
@@ -739,36 +740,34 @@ function MacUI:Window(config)
 
         -- Tab switching (FIXED - แก้ไข logic ให้ชัดเจน)
         Button.MouseButton1Click:Connect(function()
-            -- ซ่อนทุก tab ก่อน
-            for _, t in pairs(self.Tabs) do
-                t.Page.Visible = false
-                tween(t.Button, 0.2, { BackgroundColor3 = currentTheme.TabInactive })
-                
-                if t.Label then
-                    t.Label.TextColor3 = currentTheme.TextInactive
-                else
-                    t.Button.TextColor3 = currentTheme.TextInactive
-                end
-                
-                if t.Icon then
-                    t.Icon.ImageColor3 = currentTheme.TextInactive
-                end
-            end
-            
-            -- แสดงเฉพาะ tab ที่คลิก
-            TabPage.Visible = true
-            tween(Button, 0.2, { BackgroundColor3 = currentTheme.TabActive })
-            
-            if tab.Label then
-                tab.Label.TextColor3 = currentTheme.TextActive
+        for _, t in pairs(windowSelf.Tabs) do
+            t.Page.Visible = false
+            tween(t.Button, 0.2, { BackgroundColor3 = currentTheme.TabInactive })
+
+            if t.Label then
+                t.Label.TextColor3 = currentTheme.TextInactive
             else
-                Button.TextColor3 = currentTheme.TextActive
+                t.Button.TextColor3 = currentTheme.TextInactive
             end
-            
-            if tab.Icon then
-                tab.Icon.ImageColor3 = currentTheme.TextActive
+
+            if t.Icon then
+                t.Icon.ImageColor3 = currentTheme.TextInactive
             end
-        end)
+        end
+
+        TabPage.Visible = true
+        tween(Button, 0.2, { BackgroundColor3 = currentTheme.TabActive })
+
+        if tab.Label then
+            tab.Label.TextColor3 = currentTheme.TextActive
+        else
+            Button.TextColor3 = currentTheme.TextActive
+        end
+
+        if tab.Icon then
+            tab.Icon.ImageColor3 = currentTheme.TextActive
+        end
+    end)
         
         Button.MouseEnter:Connect(function()
             if not TabPage.Visible then
@@ -779,7 +778,8 @@ function MacUI:Window(config)
                 )})
             end
         end)
-        
+    end 
+    
         Button.MouseLeave:Connect(function()
             if not TabPage.Visible then
                 tween(Button, 0.15, { BackgroundColor3 = currentTheme.TabInactive })
