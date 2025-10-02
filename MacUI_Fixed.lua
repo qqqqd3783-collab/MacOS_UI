@@ -677,6 +677,7 @@ function MacUI:Window(config)
         Font = Enum.Font.GothamMedium,
         TextSize = 13,
         AutoButtonColor = false
+        ZIndex = 3
     })
     create("UICorner", { Parent = Button, CornerRadius = UDim.new(0, 8) })
         
@@ -740,6 +741,7 @@ function MacUI:Window(config)
 
         -- Tab switching (FIXED - แก้ไข logic ให้ชัดเจน)
         Button.MouseButton1Click:Connect(function()
+        print("Tab Clicked:", name)
         for _, t in pairs(windowSelf.Tabs) do
             t.Page.Visible = false
             tween(t.Button, 0.2, { BackgroundColor3 = currentTheme.TabInactive })
