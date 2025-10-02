@@ -7,10 +7,8 @@
 ## การใช้งานเบื้องต้น
 
 ```lua
--- โหลด MacUI Library
-local MacUI = loadstring(game:HttpGet("your_raw_script_url"))()
+local MacUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/qqqqd3783-collab/Tadui/refs/heads/main/MacUI_Enhanced.lua"))()
 
--- สร้าง Window พร้อมการตั้งค่าครบครัน
 local Window = MacUI:Window({
     Title = "MacUI Hub",
     Name = "MyHub",
