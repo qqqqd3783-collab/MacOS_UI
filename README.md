@@ -1,16 +1,15 @@
-# 🎨 MacUI Library - Complete Documentation
+# 🎨 MacUI Library
 
-MacUI เป็นไลบรารี UI สำหรับ Roblox ที่ได้รับแรงบันดาลใจจาก macOS และ WindUI พร้อมฟีเจอร์ครบครันและการจัดการ Error อัจฉริยะ
+MacUI is a UI library for Roblox inspired by macOS. But if Anyone Finds any bugs, please report them to Discord. We will fix them immediately. Currently, we don't support the full Key System. 
 
 ## ✨ คุณสมบัติเด่น
 
-- 🎯 **Error Handling อัจฉริยะ** - แจ้งเตือนเฉพาะ Error จากโค้ดของผู้ใช้
-- 🎨 **3 Theme สวยงาม** - Default, Dark, Ocean พร้อมสีและขอบที่ชัดเจน
+- 🎨 **3 Theme สวยงาม** - Default, Dark, Ocean |  There will be more in the future.
 - 💾 **บันทึกค่าอัตโนมัติ** - Configuration Saving
-- 🔑 **Key System** - ระบบ Key ในตัว
+- 🔑 **Key System**
 - 📱 **รองรับ Mobile** - Touch-friendly
-- 🎭 **Loading Screen** - หน้าจอ Loading สวยงาม
-- 🎪 **13+ UI Elements** - ครบครันทุกฟีเจอร์
+- 🎭 **Loading Screen**
+- 🎪 **13+ UI Elements**
 
 ---
 
