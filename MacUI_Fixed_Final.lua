@@ -672,13 +672,21 @@ function MacUI:Window(config)
     end
     if tab.Button and typeof(tab.Button) == "Instance" then
         tween(tab.Button, 0.2, { BackgroundColor3 = currentTheme.TabInactive })
-        -- กรณีไม่มี tab.Label ให้เปลี่ยนสีที่นี่
         if not tab.Label then
             tab.Button.TextColor3 = currentTheme.TextInactive
         end
     end
-    if tab.Label and typeof(tab.Label) == "Instance" then
-        tab.Label.TextColor3 = currentTheme.TextInactive
+    -- รองรับ Label ที่เป็น Instance หรือ table
+    if tab.Label then
+        if typeof(tab.Label) == "Instance" then
+            tab.Label.TextColor3 = currentTheme.TextInactive
+        elseif type(tab.Label) == "table" then
+            for k, v in pairs(tab.Label) do
+                if typeof(v) == "Instance" and pcall(function() return v.TextColor3 end) then
+                    v.TextColor3 = currentTheme.TextInactive
+                end
+            end
+        end
     end
     if tab.Icon and typeof(tab.Icon) == "Instance" then
         tab.Icon.ImageColor3 = currentTheme.TextInactive
@@ -686,23 +694,32 @@ function MacUI:Window(config)
         end
         
         local selectedTab = self.Tabs[index]
-        selectedTab.Page.Visible = true
-        tween(selectedTab.Button, 0.2, { BackgroundColor3 = currentTheme.TabActive })
-        
-        if selectedTab.Label then
-            selectedTab.Label.TextColor3 = currentTheme.TextActive
-        else
-            selectedTab.Button.TextColor3 = currentTheme.TextActive
-        end
-        
-        if selectedTab.Icon then
-            selectedTab.Icon.ImageColor3 = currentTheme.TextActive
-        end
-        
-        for _, callback in pairs(self.OnTabChangeCallbacks) do
-            pcall(callback, index, previousTab)
+selectedTab.Page.Visible = true
+tween(selectedTab.Button, 0.2, { BackgroundColor3 = currentTheme.TabActive })
+
+if selectedTab.Label then
+    if typeof(selectedTab.Label) == "Instance" then
+        selectedTab.Label.TextColor3 = currentTheme.TextActive
+    elseif type(selectedTab.Label) == "table" then
+        for k, v in pairs(selectedTab.Label) do
+            if typeof(v) == "Instance" and pcall(function() return v.TextColor3 end) then
+                v.TextColor3 = currentTheme.TextActive
+            end
         end
     end
+else
+    if selectedTab.Button and typeof(selectedTab.Button) == "Instance" then
+        selectedTab.Button.TextColor3 = currentTheme.TextActive
+    end
+end
+
+if selectedTab.Icon and typeof(selectedTab.Icon) == "Instance" then
+    selectedTab.Icon.ImageColor3 = currentTheme.TextActive
+end
+
+for _, callback in pairs(self.OnTabChangeCallbacks) do
+    pcall(callback, index, previousTab)
+        end
     
     -- NEW: OnTabChange Event
     function self:OnTabChange(callback)
