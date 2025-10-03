@@ -667,18 +667,22 @@ function MacUI:Window(config)
         self.CurrentTab = index
         
         for i, tab in pairs(self.Tabs) do
-            tab.Page.Visible = false
-            tween(tab.Button, 0.2, { BackgroundColor3 = currentTheme.TabInactive })
-            
-            if tab.Label then
-                tab.Label.TextColor3 = currentTheme.TextInactive
-            else
-                tab.Button.TextColor3 = currentTheme.TextInactive
-            end
-            
-            if tab.Icon then
-                tab.Icon.ImageColor3 = currentTheme.TextInactive
-            end
+    if tab.Page and typeof(tab.Page) == "Instance" then
+        tab.Page.Visible = false
+    end
+    if tab.Button and typeof(tab.Button) == "Instance" then
+        tween(tab.Button, 0.2, { BackgroundColor3 = currentTheme.TabInactive })
+        -- กรณีไม่มี tab.Label ให้เปลี่ยนสีที่นี่
+        if not tab.Label then
+            tab.Button.TextColor3 = currentTheme.TextInactive
+        end
+    end
+    if tab.Label and typeof(tab.Label) == "Instance" then
+        tab.Label.TextColor3 = currentTheme.TextInactive
+    end
+    if tab.Icon and typeof(tab.Icon) == "Instance" then
+        tab.Icon.ImageColor3 = currentTheme.TextInactive
+    end
         end
         
         local selectedTab = self.Tabs[index]
