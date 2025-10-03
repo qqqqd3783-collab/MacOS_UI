@@ -863,6 +863,33 @@ function MacUI:Window(config)
             
             return label
         end
+
+        function tab:Paragraph(cfg)
+            local paragraph = create("TextLabel", {
+                Parent = TabPage,
+                Size = UDim2.new(1, -20, 0, 0),
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BorderSizePixel = 0,
+                Text = cfg.Text or "",
+                TextColor3 = Color3.fromRGB(70, 70, 75),
+                Font = Enum.Font.Gotham,
+                TextSize = 13,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                TextYAlignment = Enum.TextYAlignment.Top,
+                TextWrapped = true,
+                AutomaticSize = Enum.AutomaticSize.Y
+            })
+            create("UICorner", { Parent = paragraph, CornerRadius = UDim.new(0, 8) })
+            create("UIPadding", { 
+                Parent = paragraph, 
+                PaddingLeft = UDim.new(0, 15),
+                PaddingRight = UDim.new(0, 15),
+                PaddingTop = UDim.new(0, 10),
+                PaddingBottom = UDim.new(0, 10)
+            })
+            
+            return paragraph
+        end
         
         function tab:Button(cfg)
             local btn = create("TextButton", {
