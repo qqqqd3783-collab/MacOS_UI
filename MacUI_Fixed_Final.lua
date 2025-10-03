@@ -1168,76 +1168,66 @@ for _, callback in pairs(self.OnTabChangeCallbacks) do
             })
             
             local dragging = false
-            
-            local function updateSlider(input)
-                local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
-                value = math.floor(min + (max - min) * pos)
-                
+            local dragInputConn
+
+            local function updateSliderFromPos(x)
+                local rel = math.clamp((x - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
+                value = math.floor(min + (max - min) * rel + 0.5)
                 valueLabel.Text = tostring(value)
-                sliderFill.Size = UDim2.new(pos, 0, 1, 0)
-                sliderKnob.Position = UDim2.new(pos, -9, 0.5, -9)
-                
+                sliderFill.Size = UDim2.new(rel, 0, 1, 0)
+                sliderKnob.Position = UDim2.new(rel, -9, 0.5, -9)
                 if cfg.Callback then cfg.Callback(value) end
-                
                 if self.ConfigData and cfg.Flag then
                     self.ConfigData[cfg.Flag] = value
                     if self.SaveConfig then self.SaveConfig() end
                 end
             end
-            
+
             local function startDragging(input)
                 dragging = true
                 tween(sliderKnob, 0.1, { Size = UDim2.new(0, 22, 0, 22), Position = UDim2.new(sliderKnob.Position.X.Scale, -11, 0.5, -11) })
-                updateSlider(input)
+                updateSliderFromPos(input.Position.X)
+
+                local function move(inputObj)
+                    updateSliderFromPos(inputObj.Position.X)
+                end
+
+                dragInputConn = UserInputService.InputChanged:Connect(function(inputObj)
+                    if dragging and (inputObj.UserInputType == Enum.UserInputType.MouseMovement or inputObj.UserInputType == Enum.UserInputType.Touch) then
+                        move(inputObj)
+                    end
+                end)
             end
-            
+
             local function stopDragging()
                 dragging = false
                 tween(sliderKnob, 0.1, { Size = UDim2.new(0, 18, 0, 18), Position = UDim2.new(sliderKnob.Position.X.Scale, -9, 0.5, -9) })
+                if dragInputConn then dragInputConn:Disconnect() dragInputConn = nil end
             end
-            
+
             sliderKnob.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-                   input.UserInputType == Enum.UserInputType.Touch then
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                     startDragging(input)
+                    input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            stopDragging()
+                        end
+                    end)
                 end
             end)
-            
-            sliderKnob.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-                   input.UserInputType == Enum.UserInputType.Touch then
-                    stopDragging()
-                end
-            end)
-            
-            UserInputService.InputChanged:Connect(function(input)
-                if dragging then
-                    if input.UserInputType == Enum.UserInputType.MouseMovement then
-                        updateSlider(input)
-                    end
-                end
-            end)
-            
-            UserInputService.TouchMoved:Connect(function(input, processed)
-                if dragging and not processed then
-                    updateSlider(input)
-                end
-            end)
-            
+
             sliderBg.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-                   input.UserInputType == Enum.UserInputType.Touch then
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                     startDragging(input)
+                    input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            stopDragging()
+                        end
+                    end)
                 end
             end)
-            
-            sliderBg.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-                   input.UserInputType == Enum.UserInputType.Touch then
-                    stopDragging()
-                end
-            end)
-            
+
+            -- โหลดค่าจาก Config ถ้ามี
             if self.ConfigData and cfg.Flag and self.ConfigData[cfg.Flag] then
                 value = self.ConfigData[cfg.Flag]
                 valueLabel.Text = tostring(value)
@@ -1245,7 +1235,7 @@ for _, callback in pairs(self.OnTabChangeCallbacks) do
                 sliderFill.Size = UDim2.new(pos, 0, 1, 0)
                 sliderKnob.Position = UDim2.new(pos, -9, 0.5, -9)
             end
-            
+
             return holder
         end
         
