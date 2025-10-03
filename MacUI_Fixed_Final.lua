@@ -1,7 +1,5 @@
---// Enhanced MacUI Library - Tab System Fixed (Inspired by WindUI)
 local MacUI = {}
 
--- Services
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
@@ -9,11 +7,10 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
--- Configuration Storage
+
 local ConfigFolder = "MacUI_Configs"
 local SavedConfigs = {}
 
--- Helper Functions
 local function create(class, props)
     local obj = Instance.new(class)
     for i, v in pairs(props) do
@@ -33,7 +30,7 @@ local function tween(obj, time, props)
     return tween
 end
 
--- Save/Load Configuration
+
 local function SaveConfig(fileName, data)
     if not isfolder(ConfigFolder) then
         makefolder(ConfigFolder)
@@ -48,7 +45,6 @@ local function LoadConfig(fileName)
     return nil
 end
 
---// Loading Screen
 local function CreateLoadingScreen(config)
     local LoadingGui = create("ScreenGui", {
         Parent = LocalPlayer:WaitForChild("PlayerGui"),
@@ -120,7 +116,6 @@ local function CreateLoadingScreen(config)
     end)
 end
 
---// Key System
 local function CreateKeySystem(config)
     local keySettings = config.KeySettings or {}
     
