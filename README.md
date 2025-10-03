@@ -1,22 +1,25 @@
-# MacUI Library - Example Usage
+# 🌟 MacUI Library
 
-นี่คือตัวอย่างการใช้งาน **MacUI Library** สำหรับ Roblox โดยมีฟีเจอร์ครบครัน เช่น Tabs, Sections, Buttons, Sliders, Toggles, Dropdowns, Inputs, ColorPicker, Keybinds และ Configuration Saving
+MacUI เป็น **Roblox UI Library** ที่ออกแบบสไตล์ MacOS ใช้งานง่าย ครบฟังก์ชัน 🎨  
 
 ---
 
-## การใช้งานเบื้องต้น
-
+## 🔹 Load Library
 ```lua
-local MacUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/qqqqd3783-collab/Tadui/refs/heads/main/MacUI_Enhanced.lua"))()
+local MacUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/qqqqd3783-collab/Tadui/refs/heads/main/MacUI_Fixed_Final.lua"))()
 
+---
+
+## Window
+```lua
 local Window = MacUI:Window({
     Title = "MacUI Hub",
     Name = "MyHub",
     Size = UDim2.new(0, 600, 0, 400),
-    Icon = 4483362458, -- หรือ 0 ไม่แสดง icon
+    Icon = 4483362458,
     LoadingTitle = "MacUI Hub",
     LoadingSubtitle = "Loading...",
-    Theme = "Default", -- Default, Dark, Ocean
+    Theme = "Default",
     ToggleUIKeybind = "K",
     ShowText = "MacUI",
     ConfigurationSaving = {
@@ -24,19 +27,17 @@ local Window = MacUI:Window({
         FolderName = nil,
         FileName = "MyHub_Config"
     },
-    Discord = {
-        Enabled = false,
-        Invite = "your_invite_code",
-        RememberJoins = true
-    },
     KeySystem = false,
     KeySettings = {
         Title = "Key System",
         Subtitle = "Enter your key",
-        Note = "Get key from our website: example.com",
+        Note = "Get key from our website",
         FileName = "MyHub_Key",
         SaveKey = true,
         GrabKeyFromSite = false,
         Key = {"Hello", "MyKey123"}
     }
 })
+
+---
+
