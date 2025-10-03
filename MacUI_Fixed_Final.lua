@@ -23,6 +23,10 @@ local function create(class, props)
 end
 
 local function tween(obj, time, props)
+    if typeof(obj) ~= "Instance" then
+        warn("Tween target is not an Instance:", obj)
+        return
+    end
     local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     local tween = TweenService:Create(obj, tweenInfo, props)
     tween:Play()
