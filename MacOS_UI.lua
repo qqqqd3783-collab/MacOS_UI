@@ -1,7 +1,6 @@
---// Enhanced MacUI Library - Tab System Fixed (Inspired by WindUI)
+-- Join Discord: https://discord.gg/cQywVqjcyj
 local MacUI = {}
 
--- Services
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
@@ -9,11 +8,9 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
--- Configuration Storage
 local ConfigFolder = "MacUI_Configs"
 local SavedConfigs = {}
 
--- Helper Functions
 local function create(class, props)
     local obj = Instance.new(class)
     for i, v in pairs(props) do
@@ -29,7 +26,6 @@ local function tween(obj, time, props)
     return tween
 end
 
--- Save/Load Configuration
 local function SaveConfig(fileName, data)
     if not isfolder(ConfigFolder) then
         makefolder(ConfigFolder)
@@ -44,7 +40,6 @@ local function LoadConfig(fileName)
     return nil
 end
 
---// Loading Screen
 local function CreateLoadingScreen(config)
     local LoadingGui = create("ScreenGui", {
         Parent = LocalPlayer:WaitForChild("PlayerGui"),
@@ -116,7 +111,6 @@ local function CreateLoadingScreen(config)
     end)
 end
 
---// Key System
 local function CreateKeySystem(config, callback)
     local keySettings = config.KeySettings or {}
     local keyAccepted = false
@@ -181,7 +175,7 @@ local function CreateKeySystem(config, callback)
         Position = UDim2.new(0, 20, 0, 150),
         BackgroundColor3 = Color3.fromRGB(52, 199, 89),
         BorderSizePixel = 0,
-        Text = "🔑 Get Key",
+        Text = "Get Key",
         TextColor3 = Color3.fromRGB(255, 255, 255),
         Font = Enum.Font.GothamMedium,
         TextSize = 14,
@@ -192,9 +186,9 @@ local function CreateKeySystem(config, callback)
     GetKeyBtn.MouseButton1Click:Connect(function()
         if keySettings.KeyLink then
             setclipboard(keySettings.KeyLink)
-            GetKeyBtn.Text = "✓ Link Copied!"
+            GetKeyBtn.Text = "Link Copied!"
             wait(1.5)
-            GetKeyBtn.Text = "🔑 Get Key"
+            GetKeyBtn.Text = "Get Key"
         end
     end)
     
@@ -290,7 +284,6 @@ local function CreateKeySystem(config, callback)
     end
 end
 
---// Window
 function MacUI:Window(config)
     local self = {}
     self.Tabs = {}
@@ -686,7 +679,6 @@ function MacUI:Window(config)
         self.SaveConfig = function() end
     end
 
-    -- NEW: SelectTab Function (Inspired by WindUI)
     function self:SelectTab(index)
         if not self.Tabs[index] then
             warn("[MacUI] Tab index " .. tostring(index) .. " does not exist")
@@ -757,12 +749,10 @@ function MacUI:Window(config)
         end
     end
     
-    -- NEW: OnTabChange Event
     function self:OnTabChange(callback)
         table.insert(self.OnTabChangeCallbacks, callback)
     end
 
-    -- REFACTORED: Tab Function with Index-Based Registry
     function self:Tab(name, icon)
         local tab = {}
         local tabIndex = #self.Tabs + 1
@@ -2204,7 +2194,6 @@ function MacUI:Window(config)
     return self
 end
 
---// Notify System (Simple, Theme-based)
 function MacUI:Notify(cfg)
     cfg = cfg or {}
     local window = cfg.Window
