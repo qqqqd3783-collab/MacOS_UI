@@ -1097,6 +1097,7 @@ for _, callback in pairs(self.OnTabChangeCallbacks) do
             local value = cfg.Default or cfg.Min or 0
             local min = cfg.Min or 0
             local max = cfg.Max or 100
+            if min == max then max = min + 1 end -- ป้องกันหาร 0
             
             local holder = create("Frame", {
                 Parent = TabPage,
@@ -1166,6 +1167,7 @@ for _, callback in pairs(self.OnTabChangeCallbacks) do
             local dragInputConn
 
             local function updateSliderFromPos(x)
+                if not sliderBg or sliderBg.AbsoluteSize.X == 0 then return end
                 local rel = math.clamp((x - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
                 value = math.floor(min + (max - min) * rel + 0.5)
                 valueLabel.Text = tostring(value)
@@ -1180,16 +1182,12 @@ for _, callback in pairs(self.OnTabChangeCallbacks) do
 
             local function startDragging(input)
                 dragging = true
+                if dragInputConn then dragInputConn:Disconnect() dragInputConn = nil end
                 tween(sliderKnob, 0.1, { Size = UDim2.new(0, 22, 0, 22), Position = UDim2.new(sliderKnob.Position.X.Scale, -11, 0.5, -11) })
                 updateSliderFromPos(input.Position.X)
-
-                local function move(inputObj)
-                    updateSliderFromPos(inputObj.Position.X)
-                end
-
                 dragInputConn = UserInputService.InputChanged:Connect(function(inputObj)
                     if dragging and (inputObj.UserInputType == Enum.UserInputType.MouseMovement or inputObj.UserInputType == Enum.UserInputType.Touch) then
-                        move(inputObj)
+                        updateSliderFromPos(inputObj.Position.X)
                     end
                 end)
             end
@@ -1222,18 +1220,18 @@ for _, callback in pairs(self.OnTabChangeCallbacks) do
                 end
             end)
 
-            -- โหลดค่าจาก Config ถ้ามี
+            -- <<<<<<< ส่วนโหลดค่าจาก Config (ควรวางตรงนี้) >>>>>>>
+            RunService.RenderStepped:Wait()
             if self.ConfigData and cfg.Flag and self.ConfigData[cfg.Flag] then
                 value = self.ConfigData[cfg.Flag]
                 valueLabel.Text = tostring(value)
                 local pos = (value - min) / (max - min)
                 sliderFill.Size = UDim2.new(pos, 0, 1, 0)
                 sliderKnob.Position = UDim2.new(pos, -9, 0.5, -9)
-            end
+             end
 
             return holder
-        end
-        
+         end
         function tab:Dropdown(cfg)
             local selectedValue = cfg.Default or (cfg.Options and cfg.Options[1]) or "Select"
             local isOpen = false
