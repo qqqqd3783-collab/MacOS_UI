@@ -1,11 +1,9 @@
 # 🎨 MacUI Library - Complete Documentation
 
-MacUI เป็นไลบรารี UI สำหรับ Roblox ที่ได้รับแรงบันดาลใจจาก macOS และ WindUI พร้อมฟีเจอร์ครบครันและการจัดการ Error อัจฉริยะ
+MacUI is a UI library for Roblox inspired by macOS. If Anyone find any bugs, please report them to Discord and I will fix them. The Fully Key System is not ready yet.
 
 ## ✨ คุณสมบัติเด่น
 
-- 🎯 **Error Handling อัจฉริยะ** - แจ้งเตือนเฉพาะ Error จากโค้ดของผู้ใช้
-- 🎨 **3 Theme สวยงาม** - Default, Dark, Ocean พร้อมสีและขอบที่ชัดเจน
 - 💾 **บันทึกค่าอัตโนมัติ** - Configuration Saving
 - 🔑 **Key System** - ระบบ Key ในตัว
 - 📱 **รองรับ Mobile** - Touch-friendly
@@ -26,31 +24,25 @@ local MacUI = loadstring(game:HttpGet("YOUR_SCRIPT_URL"))()
 
 ```lua
 local Window = MacUI:Window({
-    -- ✅ พื้นฐาน
     Title = "MacUI Demo",
     Size = UDim2.new(0, 600, 0, 400),
     Theme = "Default", -- "Default", "Dark", "Ocean"
     Icon = 0, -- Asset ID หรือ URL (ไม่บังคับ)
     
-    -- ✅ Loading Screen
     LoadingTitle = "MacUI",
     LoadingSubtitle = "Loading...",
     
-    -- ✅ UI Toggle
     ToggleUIKeybind = "RightControl", -- Keybind สำหรับเปิด/ปิด UI (PC)
     ShowText = "Menu", -- แสดงปุ่มเปิด Menu บนมือถือ (ไม่บังคับ)
     
-    -- ✅ Notification Settings
     NotifyFromBottom = false, -- true = Notify จากล่างขึ้นบน
     
-    -- ✅ Configuration Saving
     ConfigurationSaving = {
         Enabled = true,
         FileName = "MyConfig"
     },
     
-    -- ✅ Key System (รวมอยู่ใน Window Config)
-    KeySystem = true, -- เปิด/ปิด Key System
+    KeySystem = true,
     KeySettings = {
         Title = "Key System",
         Subtitle = "Enter your key to continue",
@@ -60,8 +52,7 @@ local Window = MacUI:Window({
         SaveKey = true, -- บันทึก Key อัตโนมัติ
         FileName = "MyScriptKey" -- ชื่อไฟล์บันทึก Key
     },
-    
-    -- ✅ Discord Integration (ไม่บังคับ)
+
     Discord = {
         Enabled = true,
         Invite = "yourinvitecode",
@@ -73,13 +64,11 @@ local Window = MacUI:Window({
 ### ตัวอย่างแบบง่าย
 
 ```lua
--- แบบง่ายที่สุด
 local Window = MacUI:Window({
     Title = "My Script",
     Theme = "Dark"
 })
 
--- แบบมี Config Saving
 local Window = MacUI:Window({
     Title = "My Script",
     Theme = "Dark",
@@ -89,7 +78,6 @@ local Window = MacUI:Window({
     }
 })
 
--- แบบมี Key System
 local Window = MacUI:Window({
     Title = "My Script",
     Theme = "Dark",
@@ -107,19 +95,12 @@ local Window = MacUI:Window({
 ## 📑 สร้าง Tab
 
 ```lua
--- Tab แบบไม่มีไอคอน
 local MainTab = Window:Tab("Main")
 
--- Tab แบบมีไอคอน (แนะนำ - สวยกว่า)
 local MainTab = Window:Tab("Main", "rbxassetid://7733779610")
 local CombatTab = Window:Tab("Combat", "rbxassetid://7733764327")
 local SettingsTab = Window:Tab("Settings", "rbxassetid://7733799682")
 ```
-
-**💡 สีและขอบของ Tab:**
-- Tab ที่เลือก → สีน้ำเงิน (Accent) + ข้อความสีขาว + ขอบชัดเจน
-- Tab ปกติ → สีเทา + ข้อความสีเทา + ขอบจาง
-- Dark Theme → ขอบสีขาวโปร่งใส สวยงาม
 
 ---
 
@@ -152,7 +133,6 @@ local Label = MainTab:Label({
     Text = "Current Status: Ready"
 })
 
--- ฟังก์ชันเพิ่มเติม
 Label:SetText("Status: Running")
 Label:Destroy()
 ```
@@ -169,7 +149,6 @@ local Button = MainTab:Button({
     end
 })
 
--- ฟังก์ชันเพิ่มเติม
 Button:SetTitle("New Title")
 Button:SetDesc("New Description")
 Button:SetCallback(function() print("New action!") end)
@@ -184,15 +163,14 @@ Button:Destroy() -- ลบปุ่ม
 local Toggle = MainTab:Toggle({
     Title = "Auto Farm",
     Default = false,
-    Flag = "AutoFarm", -- สำหรับบันทึกค่า (ถ้าเปิด Config Saving)
+    Flag = "AutoFarm",
     Callback = function(value)
         print("Toggle:", value)
     end
 })
 
--- ฟังก์ชันเพิ่มเติม
-Toggle:Set(true) -- ตั้งค่า Toggle เป็น true/false
-local value = Toggle:Get() -- อ่านค่าปัจจุบัน
+Toggle:Set(true)
+local value = Toggle:Get() -- อ่านค่าปัจุบัน
 Toggle:Destroy() -- ลบ Toggle
 ```
 
@@ -326,7 +304,6 @@ local Image = MainTab:Image({
     ScaleType = Enum.ScaleType.Fit -- ไม่บังคับ
 })
 
--- ฟังก์ชันเพิ่มเติม
 Image:SetImage("rbxassetid://987654321")
 Image:Destroy()
 ```
@@ -336,26 +313,22 @@ Image:Destroy()
 ## 🔔 Notification System
 
 ```lua
--- แจ้งเตือนพื้นฐาน
 MacUI:Notify({
     Title = "Success",
     Content = "Action completed successfully!",
     Duration = 4
 })
 
--- แจ้งเตือนพร้อมควบคุม
 local Notif = MacUI:Notify({
     Title = "Loading",
     Content = "Please wait...",
     Duration = 10
 })
 
--- เปลี่ยนข้อความ
 task.wait(2)
 Notif:SetTitle("Complete")
 Notif:SetContent("Task finished!")
 
--- ปิดทันที
 Notif:Close()
 ```
 
@@ -364,7 +337,6 @@ Notif:Close()
 ## 💾 Configuration Saving
 
 ```lua
--- เปิดใช้งาน Config Saving
 local Window = MacUI:Window({
     Title = "My Script",
     ConfigurationSaving = {
@@ -373,7 +345,6 @@ local Window = MacUI:Window({
     }
 })
 
--- ใช้ Flag ในแต่ละ Element
 MainTab:Toggle({
     Title = "Auto Farm",
     Flag = "AutoFarm", -- ระบบจะบันทึกค่าอัตโนมัติ
@@ -404,21 +375,14 @@ MainTab:Slider({
 
 ### Default Theme (สีสว่าง)
 - พื้นหลังสีขาว
-- Tab Active: สีน้ำเงิน + ขอบ
-- Tab Inactive: สีเทา
 
 ### Dark Theme (สีเข้ม)
 - พื้นหลังสีดำ
-- Tab Active: สีน้ำเงิน + **ขอบสีขาว**
-- Tab Inactive: สีเทาเข้ม
 
 ### Ocean Theme (สีน้ำเงิน)
 - พื้นหลังสีฟ้าอ่อน
-- Tab Active: สีฟ้าสด + ขอบ
-- Tab Inactive: สีฟ้าอ่อน
 
 ```lua
--- เปลี่ยน Theme
 local Window = MacUI:Window({
     Title = "My Script",
     Theme = "Dark" -- "Default", "Dark", "Ocean"
@@ -442,7 +406,6 @@ local Window = MacUI:Window({
 ## 🎯 ตัวอย่างสคริปต์เต็มรูปแบบ
 
 ```lua
--- โหลด Library
 local MacUI = loadstring(game:HttpGet("YOUR_URL"))()
 
 -- สร้าง Window พร้อม Config ครบ
@@ -468,13 +431,11 @@ local Window = MacUI:Window({
     }
 })
 
--- สร้าง Tabs
 local MainTab = Window:Tab("Main", "rbxassetid://7733779610")
 local CombatTab = Window:Tab("Combat", "rbxassetid://7733764327")
 local MiscTab = Window:Tab("Misc", "rbxassetid://7733920644")
 local SettingsTab = Window:Tab("Settings", "rbxassetid://7733799682")
 
--- Main Tab
 MainTab:Section("Farming")
 
 local AutoFarm = MainTab:Toggle({
@@ -511,7 +472,6 @@ MainTab:Button({
     end
 })
 
--- Combat Tab
 CombatTab:Section("Combat Settings")
 
 local KillAura = CombatTab:Toggle({
@@ -544,7 +504,6 @@ local WeaponSelect = CombatTab:Dropdown({
     end
 })
 
--- Misc Tab
 MiscTab:Section("ESP Settings")
 
 local ESPColor = MiscTab:ColorPicker({
@@ -568,7 +527,6 @@ task.spawn(function()
     end
 end)
 
--- Settings Tab
 SettingsTab:Section("UI Settings")
 
 local UIKeybind = SettingsTab:Keybind({
@@ -610,7 +568,6 @@ UpdateCode:OnCopy(function()
     })
 end)
 
--- แจ้งเตือนเมื่อโหลดเสร็จ
 MacUI:Notify({
     Title = "Script Loaded",
     Content = "All features ready to use!",
@@ -620,18 +577,7 @@ MacUI:Notify({
 
 ---
 
-## ⚡ Error Handling
 
-MacUI มีระบบจัดการ Error อัจฉริยะที่จะแจ้งเตือนเฉพาะ Error ที่เกิดจากโค้ดของผู้ใช้:
-
-```lua
-MainTab:Button({
-    Title = "Test Error",
-    Callback = function()
-        -- Error นี้จะแสดง Notification อัตโนมัติ
-        Local = Test -- ตัว L เป็นตัวใหญ่ จะเกิด error
-    end
-})
 ```
 
 ---
@@ -645,9 +591,6 @@ MainTab:Button({
 5. **ใช้ Label** สำหรับแสดงข้อมูล Real-time
 6. **ใช้ Code** เพื่อแสดงลิงก์อัพเดทหรือโค้ดตัวอย่าง
 7. **ใช้ Image** เพื่อเพิ่มความสวยงามหรือแสดง Logo
-8. **ทดสอบบน Mobile** เพื่อให้แน่ใจว่าใช้งานได้ทุกแพลตฟอร์ม
-9. **Dark Theme มีขอบสีขาว** - เลือก Dark Theme สำหรับความสวยงาม
-10. **Tab มีไอคอน** - แสดงไอคอนทำให้ดูโปรฟังก์ชั่นมากขึ้น
 
 ---
 
@@ -687,9 +630,9 @@ Free to use for personal and commercial projects.
 ## 💬 Support
 
 หากมีปัญหาหรือต้องการความช่วยเหลือ:
-- Discord: Your Discord Server
-- Github: Your Github Repository
+- Discord: https://discord.gg/cQywVqjcyj
+- Github: https://github.com/qqqqd3783-collab
 
 ---
 
-**Made with ❤️ by MacUI Team**
+**Made with ❤️ by TAD HUB Team**
