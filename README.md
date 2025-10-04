@@ -1,6 +1,6 @@
 # 🎨 MacUI Library - Complete Documentation
 
-MacUI is a macOS-inspired UI library for Roblox with built-in Key System support.
+MacUI is a UI library inspired by macOS. If you find any bugs, please report them to Discord and we'll fix them. Also, the Service key retrieval system is not available yet.
 
 ## ✨ Features
 
@@ -17,7 +17,7 @@ MacUI is a macOS-inspired UI library for Roblox with built-in Key System support
 ## 🚀 Installation
 
 ```lua
-local MacUI = loadstring(game:HttpGet("YOUR_SCRIPT_URL"))()
+local MacUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/qqqqd3783-collab/Tadui/refs/heads/main/Main.lua"))()
 ```
 
 ---
@@ -96,7 +96,7 @@ local Window = MacUI:Window({
 })
 ```
 
-### Service Key System
+### Service Key System Not ready yet, still being fixed.
 
 #### Platoboost
 
@@ -467,7 +467,7 @@ local Window = MacUI:Window({
 ## 🎯 Complete Example
 
 ```lua
-local MacUI = loadstring(game:HttpGet("YOUR_URL"))()
+local MacUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/qqqqd3783-collab/Tadui/refs/heads/main/Main.lua"))()
 
 local Window = MacUI:Window({
     Title = "My Amazing Script",
