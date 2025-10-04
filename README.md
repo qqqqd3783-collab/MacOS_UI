@@ -1,4 +1,4 @@
-# 🎨 MacUI Library - Complete Documentation
+# 🎨 MacUI Library
 
 MacUI is a UI library inspired by macOS. If you find any bugs, please report them to Discord and we'll fix them. Also, the Service key retrieval system is not available yet.
 
