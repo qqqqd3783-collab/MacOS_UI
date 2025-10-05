@@ -31,14 +31,32 @@ local function SaveConfig(fileName, data)
         makefolder(ConfigFolder)
     end
     local filePath = ConfigFolder .. "/" .. fileName .. ".json"
-    writefile(filePath, HttpService:JSONEncode(data))
+    local jsonString
+    if next(data) == nil then
+        jsonString = "{}"
+    else
+        jsonString = HttpService:JSONEncode(data)
+    end
+    
+    writefile(filePath, jsonString)
     print("[MacUI Config] Saved to:", filePath)
     print("[MacUI Config] Check your executor's workspace folder!")
 end
 
 local function LoadConfig(fileName)
     if isfile(ConfigFolder .. "/" .. fileName .. ".json") then
-        return HttpService:JSONDecode(readfile(ConfigFolder .. "/" .. fileName .. ".json"))
+        local content = readfile(ConfigFolder .. "/" .. fileName .. ".json")
+        if content == "[]" then
+            return {}
+        end
+        local success, result = pcall(function()
+            return HttpService:JSONDecode(content)
+        end)
+        if success then
+            return result
+        else
+            return {}
+        end
     end
     return nil
 end
