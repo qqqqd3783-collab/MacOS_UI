@@ -1716,6 +1716,18 @@ function MacUI:Window(config)
             if max == nil then max = 100 end
             local value = cfg.Default
             if value == nil then value = min end
+
+            local isDecimal = (min % 1 ~= 0) or (max % 1 ~= 0) or (cfg.Decimals and cfg.Decimals > 0)
+local decimals = cfg.Decimals or 2
+
+local function roundValue(val)
+    if isDecimal then
+        local mult = 10^decimals
+        return math.floor(val * mult + 0.5) / mult
+    else
+        return math.floor(val)
+    end
+                end
             
             local holder = create("Frame", {
                 Parent = TabPage,
@@ -1785,7 +1797,7 @@ function MacUI:Window(config)
             
             local function updateSlider(input)
                 local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
-                value = math.floor(min + (max - min) * pos)
+                value = roundValue(min + (max - min) * pos)
                 
                 valueLabel.Text = tostring(value)
                 sliderFill.Size = UDim2.new(pos, 0, 1, 0)
