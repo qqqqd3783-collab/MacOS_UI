@@ -1,6 +1,6 @@
 # 🎨 MacUI Library
 
-MacUI is a UI library inspired by macOS. If you find any bugs, please report them to Discord and we'll fix them. Also, the Service key retrieval system is not available yet.
+MacUI is a UI library inspired by macOS. If you find any bugs, please report them to Discord and we'll fix them.
 
 ## ✨ Features
 
@@ -96,39 +96,59 @@ local Window = MacUI:Window({
 })
 ```
 
-### Service Key System Not ready yet, still being fixed.
+### Service Key System
 
 #### Platoboost
 
 ```lua
-KeySettings = {
-    Title = "Platoboost Key",
-    Service = "platoboost",
-    ServiceArgs = {"your_service_id", "your_secret"},
-    SaveKey = true
-}
+local Window = MacUI:Window({
+    KeySystem = true,
+    KeySettings = {
+        Title = "Key System",
+        Subtitle = "Enter your key to continue",
+        Note = "Copy link to get your key!",
+        Service = "platoboost",
+        ServiceId = "your_service_id_here",
+        Secret = "your_secret_key_here",
+        SaveKey = true,
+        FileName = "MyScriptKey"
+    }
+})
 ```
 
 #### Panda Development
 
 ```lua
-KeySettings = {
-    Title = "Panda Key",
-    Service = "pandadevelopment",
-    ServiceArgs = {"your_service_id"},
-    SaveKey = true
-}
+local Window = MacUI:Window({
+    KeySystem = true,
+    KeySettings = {
+        Title = "Key System",
+        Subtitle = "Enter your key to continue",
+        Note = "Get your key from Panda Development!",
+        Service = "pandadevelopment",
+        ServiceId = "your_service_name_here",  -- ชื่อ service ของคุณ
+        SaveKey = true,
+        FileName = "MyScriptKey"
+    }
+})
 ```
 
 #### Luarmor
 
 ```lua
-KeySettings = {
-    Title = "Luarmor Key",
-    Service = "luarmor",
-    ServiceArgs = {"script_key", "discord_invite"},
-    SaveKey = true
-}
+local Window = MacUI:Window({
+    KeySystem = true,
+    KeySettings = {
+        Title = "Key System",
+        Subtitle = "Enter your key to continue",
+        Note = "Join Discord to get your key!",
+        Service = "luarmor",
+        ScriptId = "your_script_id_here",  -- Script ID จาก Luarmor
+        Discord = "discord.gg/yourserver",  -- Discord invite link
+        SaveKey = true,
+        FileName = "MyScriptKey"
+    }
+})
 ```
 
 ---
