@@ -1710,9 +1710,12 @@ function MacUI:Window(config)
         end
         
         function tab:Slider(cfg)
-            local value = cfg.Default or cfg.Min or 0
-            local min = cfg.Min or 0
-            local max = cfg.Max or 100
+            local min = cfg.Min
+            if min == nil then min = 0 end
+            local max = cfg.Max
+            if max == nil then max = 100 end
+            local value = cfg.Default
+            if value == nil then value = min end
             
             local holder = create("Frame", {
                 Parent = TabPage,
