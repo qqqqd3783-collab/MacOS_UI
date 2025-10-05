@@ -30,7 +30,10 @@ local function SaveConfig(fileName, data)
     if not isfolder(ConfigFolder) then
         makefolder(ConfigFolder)
     end
-    writefile(ConfigFolder .. "/" .. fileName .. ".json", HttpService:JSONEncode(data))
+    local filePath = ConfigFolder .. "/" .. fileName .. ".json"
+    writefile(filePath, HttpService:JSONEncode(data))
+    print("[MacUI Config] Saved to:", filePath)
+    print("[MacUI Config] Check your executor's workspace folder!")
 end
 
 local function LoadConfig(fileName)
