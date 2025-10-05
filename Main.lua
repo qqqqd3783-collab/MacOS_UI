@@ -2113,7 +2113,7 @@ local function roundValue(val)
                 if isOpen then
                     optionsFrame.Visible = true
                     local optionCount = #(cfg.Options or {})
-                    local maxHeight = math.min(optionCount * 34 + 8, 150)
+                    local maxHeight = math.min(optionCount * 34 + 8, cfg.MaxHeight or 250)
                     holder.Size = UDim2.new(1, -20, 0, 38 + maxHeight + 4)
                     tween(optionsFrame, 0.2, { Size = UDim2.new(1, 0, 0, maxHeight) })
                     tween(arrow, 0.2, { Rotation = 180 })
