@@ -977,15 +977,33 @@ function MacUI:Window(config)
 
     self.ConfigData = {}
     if config.ConfigurationSaving and config.ConfigurationSaving.Enabled then
-        self.ConfigData = LoadConfig(config.ConfigurationSaving.FileName or "MacUI_Config") or {}
+        local configFileName = config.ConfigurationSaving.FileName or "MacUI_Config"
+        self.ConfigData = LoadConfig(configFileName) or {}
+        
+        print("[MacUI] Config system enabled - File:", configFileName .. ".json")
+        print("[MacUI] Loaded config data:", HttpService:JSONEncode(self.ConfigData))
         
         self.SaveConfig = function()
             if config.ConfigurationSaving and config.ConfigurationSaving.Enabled then
-                SaveConfig(config.ConfigurationSaving.FileName or "MacUI_Config", self.ConfigData)
+                SaveConfig(configFileName, self.ConfigData)
+                print("[MacUI] Config data saved:", HttpService:JSONEncode(self.ConfigData))
             end
         end
+        
+        SaveConfig(configFileName, self.ConfigData)
+        print("[MacUI] Initial config file created")
+        
+        task.spawn(function()
+            while ScreenGui and ScreenGui.Parent do
+                task.wait(10)
+                if next(self.ConfigData) ~= nil then
+                    self.SaveConfig()
+                end
+            end
+        end)
     else
         self.SaveConfig = function() end
+        print("[MacUI] Config system disabled")
     end
 
     function self:SelectTab(index)
