@@ -1989,10 +1989,12 @@ local function roundValue(val)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
                 ScrollBarThickness = 4,
-                ScrollBarImageColor3 = Color3.fromRGB(200, 200, 205)
+                ScrollBarImageColor3 = Color3.fromRGB(200, 200, 205),
+                CanvasSize = UDim2.new(0, 0, 0, 0),
+                AutomaticCanvasSize = Enum.AutomaticSize.Y
             })
             
-            create("UIListLayout", {
+            local listLayout = create("UIListLayout", {
                 Parent = optionsList,
                 Padding = UDim.new(0, 2),
                 FillDirection = Enum.FillDirection.Vertical,
