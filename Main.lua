@@ -1088,7 +1088,7 @@ function MacUI:Window(config)
             Thickness = 3,
             Color = currentTheme.TabStrokeInactive,
             Transparency = config.Theme == "Dark" and 0.8 or 0.5,
-            ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
+            ApplyStrokeMode = Enum.ApplyStrokeMode.Border
         })
         
         if icon then
