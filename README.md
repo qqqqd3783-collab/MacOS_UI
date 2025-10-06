@@ -227,6 +227,7 @@ local Toggle = MainTab:Toggle({
     end
 })
 
+Toggle:SetTitle("New Toggle Name")
 Toggle:Set(true)
 local value = Toggle:Get()
 Toggle:Destroy()
@@ -271,6 +272,7 @@ local Slider = MainTab:Slider({
     end
 })
 
+Slider:SetTitle("New Slider Name")
 Slider:Set(75)
 local value = Slider:Get()
 Slider:SetMin(10)
@@ -292,6 +294,8 @@ local Dropdown = MainTab:Dropdown({
     end
 })
 
+Dropdown:SetTitle("New Dropdown Name")
+
 -- Multiple Selection
 local MultiDropdown = MainTab:Dropdown({
     Title = "Select Items",
@@ -302,6 +306,8 @@ local MultiDropdown = MainTab:Dropdown({
         print("Selected:", table.concat(selected, ", "))
     end
 })
+
+Dropdown:SetTitle("New Dropdown Name")
 ```
 
 ### 11. Keybind
@@ -315,6 +321,8 @@ local Keybind = MainTab:Keybind({
         print("Key:", key)
     end
 })
+
+Keybind:SetTitle("New Keybind Name")
 ```
 
 ### 12. ColorPicker
@@ -328,6 +336,8 @@ local ColorPicker = MainTab:ColorPicker({
         print("Color:", color)
     end
 })
+
+ColorPicker:SetTitle("New Color Name")
 ```
 
 ### 13. Code
@@ -344,6 +354,7 @@ end
     ]]
 })
 
+Code:SetTitle("New Code Title")
 Code:SetCode([[print("New code!")]])
 Code:OnCopy(function()
     print("Code copied!")
