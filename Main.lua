@@ -1491,12 +1491,12 @@ function MacUI:Window(config)
             end)
             
             local buttonAPI = {
-                SetTitle = function(newTitle)
+                SetTitle = function(self, newTitle)
                     currentTitle = newTitle
                     titleLabel.Text = newTitle
                 end,
                 
-                SetDesc = function(newDesc)
+                SetDesc = function(self, newDesc)
                     currentDesc = newDesc
                     if newDesc and newDesc ~= "" then
                         if not descLabel then
@@ -1528,11 +1528,11 @@ function MacUI:Window(config)
                     end
                 end,
                 
-                SetCallback = function(newCallback)
+                SetCallback = function(self, newCallback)
                     currentCallback = newCallback
                 end,
                 
-                Lock = function()
+                Lock = function(self)
                     isLocked = true
                     btn.BackgroundColor3 = Color3.fromRGB(180, 180, 185)
                     if not lockIcon then
@@ -1549,7 +1549,7 @@ function MacUI:Window(config)
                     end
                 end,
                 
-                Unlock = function()
+                Unlock = function(self)
                     isLocked = false
                     btn.BackgroundColor3 = currentTheme.Accent
                     if lockIcon then
@@ -1558,7 +1558,7 @@ function MacUI:Window(config)
                     end
                 end,
                 
-                Destroy = function()
+                Destroy = function(self)
                     holder:Destroy()
                 end
             }
@@ -1637,7 +1637,7 @@ function MacUI:Window(config)
             end
             
             local toggleAPI = {
-                Set = function(value)
+                Set = function(self, value)
                     toggleState = value
                     tween(toggleBg, 0.2, { 
                         BackgroundColor3 = toggleState and Color3.fromRGB(52, 199, 89) or Color3.fromRGB(200, 200, 205)
@@ -1916,7 +1916,7 @@ local function roundValue(val)
             end
             
             local sliderAPI = {
-                Set = function(newValue)
+                Set = function(self, newValue)
                     value = math.clamp(newValue, min, max)
                     valueLabel.Text = tostring(value)
                     local pos = (value - min) / (max - min)
@@ -2312,7 +2312,7 @@ local function roundValue(val)
                     return currentKey
                 end,
                 
-                Set = function(newKey)
+                Set = function(self, newKey)
                     currentKey = newKey
                     keyBtn.Text = newKey
                 end,
@@ -2604,7 +2604,7 @@ local function roundValue(val)
                     return selectedColor
                 end,
                 
-                Set = function(newColor)
+                Set = function(self, newColor)
                     selectedColor = newColor
                     colorDisplay.BackgroundColor3 = newColor
                     local r, g, b = newColor.R * 255, newColor.G * 255, newColor.B * 255
