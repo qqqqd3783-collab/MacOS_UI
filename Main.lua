@@ -1371,7 +1371,7 @@ function MacUI:Window(config)
             create("UICorner", { Parent = image, CornerRadius = UDim.new(0, 6) })
             
             local imageAPI = {
-                SetImage = function(newImage)
+                SetImage = function(self, newImage)
                     local newUrl = newImage
                     if type(newImage) == "number" then
                         newUrl = "rbxassetid://" .. newImage
@@ -1386,7 +1386,7 @@ function MacUI:Window(config)
                     end
                     image.Image = newUrl
                 end,
-                Destroy = function()
+                Destroy = function(self)
                     holder:Destroy()
                 end
             }
@@ -1652,7 +1652,7 @@ function MacUI:Window(config)
                     end
                 end,
                 
-                Get = function()
+                Get = function(self)
                     return toggleState
                 end,
                 
@@ -1660,7 +1660,7 @@ function MacUI:Window(config)
                     label.Text = newTitle
                 end,
                 
-                Destroy = function()
+                Destroy = function(self)
                     holder:Destroy()
                 end
             }
@@ -1929,7 +1929,7 @@ local function roundValue(val)
                     end
                 end,
                 
-                Get = function()
+                Get = function(self)
                     return value
                 end,
                 
@@ -1948,7 +1948,7 @@ local function roundValue(val)
                     valueLabel.Text = tostring(value)
                 end,
                 
-                SetMax = function(newMax)
+                SetMax = function(self, newMax)
                     max = newMax
                     if value > max then
                         value = max
@@ -1959,7 +1959,7 @@ local function roundValue(val)
                     valueLabel.Text = tostring(value)
                 end,
                 
-                Destroy = function()
+                Destroy = function(self)
                     holder:Destroy()
                 end
             }
@@ -2220,7 +2220,7 @@ local function roundValue(val)
                     end
                 end,
                 
-                Get = function()
+                Get = function(self)
                     if multiSelect then
                         return selectedValues
                     else
@@ -2228,7 +2228,7 @@ local function roundValue(val)
                     end
                 end,
                 
-                Destroy = function()
+                Destroy = function(self)
                     holder:Destroy()
                 end
             }
@@ -2308,7 +2308,7 @@ local function roundValue(val)
                     label.Text = newTitle
                 end,
                 
-                Get = function()
+                Get = function(self)
                     return currentKey
                 end,
                 
@@ -2317,7 +2317,7 @@ local function roundValue(val)
                     keyBtn.Text = newKey
                 end,
                 
-                Destroy = function()
+                Destroy = function(self)
                     holder:Destroy()
                 end
             }
@@ -2600,7 +2600,7 @@ local function roundValue(val)
                     label.Text = newTitle
                 end,
                 
-                Get = function()
+                Get = function(self)
                     return selectedColor
                 end,
                 
@@ -2612,7 +2612,7 @@ local function roundValue(val)
                     satValPicker.BackgroundColor3 = HSVToRGB(hue, 1, 1)
                 end,
                 
-                Destroy = function()
+                Destroy = function(self)
                     holder:Destroy()
                 end
             }
@@ -2724,7 +2724,7 @@ local function roundValue(val)
                     titleLabel.Text = newTitle
                 end,
                 
-                SetCode = function(newCode)
+                SetCode = function(self, newCode)
                     currentCode = newCode
                     codeBox.Text = newCode
                     
@@ -2737,11 +2737,11 @@ local function roundValue(val)
                     holder.Size = UDim2.new(1, -20, 0, newHeight)
                 end,
                 
-                OnCopy = function(callback)
+                OnCopy = function(self, callback)
                     onCopyCallback = callback
                 end,
                 
-                Destroy = function()
+                Destroy = function(self)
                     holder:Destroy()
                 end
             }
