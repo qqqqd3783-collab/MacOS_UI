@@ -1183,11 +1183,13 @@ function MacUI:Window(config)
             BorderSizePixel = 0,
             ScrollBarThickness = 6,
             ScrollBarImageColor3 = Color3.fromRGB(200, 200, 205),
+            CanvasSize = UDim2.new(0, 0, 0, 0),
             AutomaticCanvasSize = Enum.AutomaticSize.Y,
-            Visible = false
+            Visible = false,
+            ElasticBehavior = Enum.ElasticBehavior.Always
         })
         
-        create("UIListLayout", {
+        local listLayout = create("UIListLayout", {
             Parent = TabPage,
             Padding = UDim.new(0, 10),
             FillDirection = Enum.FillDirection.Vertical,
@@ -1202,6 +1204,10 @@ function MacUI:Window(config)
             PaddingRight = UDim.new(0, 15),
             PaddingBottom = UDim.new(0, 15)
         })
+        
+        listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            TabPage.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 30)
+        end)
 
         Button.MouseButton1Click:Connect(function()
             self:SelectTab(tabIndex)
