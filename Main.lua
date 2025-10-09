@@ -1205,7 +1205,7 @@ function MacUI:Window(config)
         })
         
         listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            TabPage.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 30)
+            TabPage.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 50)
         end)
 
         Button.MouseButton1Click:Connect(function()
