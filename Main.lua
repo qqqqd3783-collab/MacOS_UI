@@ -1186,8 +1186,6 @@ function MacUI:Window(config)
             CanvasSize = UDim2.new(0, 0, 0, 0),
             AutomaticCanvasSize = Enum.AutomaticSize.Y,
             Visible = false,
-            ElasticBehavior = Enum.ElasticBehavior.Always
-            ScrollingDirection = Enum.ScrollingDirection.Y
         })
         
         local listLayout = create("UIListLayout", {
