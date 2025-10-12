@@ -1846,7 +1846,7 @@ function MacUI:Window(config)
             local function updateSlider(input)
     local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
     local rawValue = min + (max - min) * pos
-                    
+
     if cfg.Step then
         local stepCount = math.floor((rawValue - min) / cfg.Step + 0.5)
         value = roundValue(min + stepCount * cfg.Step)
@@ -1854,10 +1854,11 @@ function MacUI:Window(config)
         value = roundValue(rawValue)
     end
 
-    valueLabel.Text = string.format("%." .. decimals .. "f", value)
     local newPos = (value - min) / (max - min)
     sliderFill.Size = UDim2.new(newPos, 0, 1, 0)
     sliderKnob.Position = UDim2.new(newPos, -9, 0.5, -9)
+
+    valueLabel.Text = string.format("%." .. decimals .. "f", value)
 
     if cfg.Callback then cfg.Callback(value) end
     if self.ConfigData and cfg.Flag then
