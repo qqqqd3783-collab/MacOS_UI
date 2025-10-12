@@ -1767,13 +1767,25 @@ function MacUI:Window(config)
 
             local isDecimal = (min % 1 ~= 0) or (max % 1 ~= 0) or (value % 1 ~= 0) or (cfg.Decimals and cfg.Decimals > 0)
             local decimals = cfg.Decimals or 2
+
+            local function roundValue(val)
+                if isDecimal then
+                    local mult = 10^decimals
+                    return math.floor(val * mult + 0.5) / mult
+                else
+                    return math.floor(val)
+                end
+            end
+            
             local function formatValue(val)
                 if val % 1 == 0 then
                     return tostring(math.floor(val))
                 else
                     return tostring(val)
                 end
-                end
+            end
+            
+            value = roundValue(value)
             
             local holder = create("Frame", {
                 Parent = TabPage,
@@ -1800,7 +1812,7 @@ function MacUI:Window(config)
                 Size = UDim2.new(0, 50, 0, 20),
                 Position = UDim2.new(1, -60, 0, 8),
                 BackgroundTransparency = 1,
-                Text = tostring(value),
+                Text = formatValue(value),
                 TextColor3 = currentTheme.Accent,
                 Font = Enum.Font.GothamBold,
                 TextSize = 13,
