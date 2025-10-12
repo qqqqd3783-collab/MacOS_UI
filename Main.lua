@@ -1802,7 +1802,7 @@ function MacUI:Window(config)
                 Size = UDim2.new(0, 50, 0, 20),
                 Position = UDim2.new(1, -60, 0, 8),
                 BackgroundTransparency = 1,
-                Text = tostring(value),
+                Text = string.format("%." .. decimals .. "f", value),
                 TextColor3 = currentTheme.Accent,
                 Font = Enum.Font.GothamBold,
                 TextSize = 13,
@@ -1844,20 +1844,27 @@ function MacUI:Window(config)
             local dragging = false
             
             local function updateSlider(input)
-                local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
-                value = roundValue(min + (max - min) * pos)
-                
-                valueLabel.Text = tostring(value)
-                sliderFill.Size = UDim2.new(pos, 0, 1, 0)
-                sliderKnob.Position = UDim2.new(pos, -9, 0.5, -9)
-                
-                if cfg.Callback then cfg.Callback(value) end
-                
-                if self.ConfigData and cfg.Flag then
-                    self.ConfigData[cfg.Flag] = value
-                    if self.SaveConfig then self.SaveConfig() end
+    local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
+    local rawValue = min + (max - min) * pos
+                    
+    if cfg.Step then
+        local stepCount = math.floor((rawValue - min) / cfg.Step + 0.5)
+        value = roundValue(min + stepCount * cfg.Step)
+    else
+        value = roundValue(rawValue)
+    end
+
+    valueLabel.Text = string.format("%." .. decimals .. "f", value)
+    local newPos = (value - min) / (max - min)
+    sliderFill.Size = UDim2.new(newPos, 0, 1, 0)
+    sliderKnob.Position = UDim2.new(newPos, -9, 0.5, -9)
+
+    if cfg.Callback then cfg.Callback(value) end
+    if self.ConfigData and cfg.Flag then
+        self.ConfigData[cfg.Flag] = value
+        if self.SaveConfig then self.SaveConfig() end
+    end
                 end
-            end
             
             local function startDragging(input)
                 dragging = true
@@ -1914,7 +1921,7 @@ function MacUI:Window(config)
             
             if self.ConfigData and cfg.Flag and self.ConfigData[cfg.Flag] then
                 value = self.ConfigData[cfg.Flag]
-                valueLabel.Text = tostring(value)
+                valueLabel.Text = string.format("%." .. decimals .. "f", value)
                 local pos = (value - min) / (max - min)
                 sliderFill.Size = UDim2.new(pos, 0, 1, 0)
                 sliderKnob.Position = UDim2.new(pos, -9, 0.5, -9)
@@ -1923,7 +1930,7 @@ function MacUI:Window(config)
             local sliderAPI = {
                 Set = function(self, newValue)
                     value = math.clamp(newValue, min, max)
-                    valueLabel.Text = tostring(value)
+                    valueLabel.Text = string.format("%." .. decimals .. "f", value)
                     local pos = (value - min) / (max - min)
                     tween(sliderFill, 0.2, { Size = UDim2.new(pos, 0, 1, 0) })
                     tween(sliderKnob, 0.2, { Position = UDim2.new(pos, -9, 0.5, -9) })
@@ -1961,7 +1968,7 @@ function MacUI:Window(config)
                     local pos = (value - min) / (max - min)
                     sliderFill.Size = UDim2.new(pos, 0, 1, 0)
                     sliderKnob.Position = UDim2.new(pos, -9, 0.5, -9)
-                    valueLabel.Text = tostring(value)
+                    valueLabel.Text = string.format("%." .. decimals .. "f", value)
                 end,
                 
                 Destroy = function(self)
