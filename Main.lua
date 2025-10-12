@@ -1765,16 +1765,14 @@ function MacUI:Window(config)
             local value = cfg.Default
             if value == nil then value = min end
 
-            local isDecimal = (min % 1 ~= 0) or (max % 1 ~= 0) or (cfg.Decimals and cfg.Decimals > 0)
-local decimals = cfg.Decimals or 2
-
-local function roundValue(val)
-    if isDecimal then
-        local mult = 10^decimals
-        return math.floor(val * mult + 0.5) / mult
-    else
-        return math.floor(val)
-    end
+            local isDecimal = (min % 1 ~= 0) or (max % 1 ~= 0) or (value % 1 ~= 0) or (cfg.Decimals and cfg.Decimals > 0)
+            local decimals = cfg.Decimals or 2
+            local function formatValue(val)
+                if val % 1 == 0 then
+                    return tostring(math.floor(val))
+                else
+                    return tostring(val)
+                end
                 end
             
             local holder = create("Frame", {
@@ -1847,7 +1845,7 @@ local function roundValue(val)
                 local pos = math.clamp((input.Position.X - sliderBg.AbsolutePosition.X) / sliderBg.AbsoluteSize.X, 0, 1)
                 value = roundValue(min + (max - min) * pos)
                 
-                valueLabel.Text = tostring(value)
+                valueLabel.Text = formatValue(value)
                 sliderFill.Size = UDim2.new(pos, 0, 1, 0)
                 sliderKnob.Position = UDim2.new(pos, -9, 0.5, -9)
                 
