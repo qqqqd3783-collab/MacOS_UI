@@ -1765,16 +1765,16 @@ function MacUI:Window(config)
             local value = cfg.Default
             if value == nil then value = min end
 
-            local isDecimal = (min % 1 ~= 0) or (max % 1 ~= 0) or (cfg.Decimals and cfg.Decimals > 0)
-local decimals = cfg.Decimals or 2
-
-local function roundValue(val)
-    if isDecimal then
-        local mult = 10^decimals
-        return math.floor(val * mult + 0.5) / mult
-    else
-        return math.floor(val)
-    end
+            local isDecimal = (min % 1 ~= 0) or (max % 1 ~= 0) or (cfg.Decimals and cfg.Decimals > 0) or (max - min < 1)
+            local decimals = cfg.Decimals or 2
+            
+            local function roundValue(val)
+                if isDecimal then
+                    local mult = 10^decimals
+                    return math.floor(val * mult + 0.5) / mult
+                else
+                    return math.floor(val + 0.5)
+                end
                 end
             
             local holder = create("Frame", {
