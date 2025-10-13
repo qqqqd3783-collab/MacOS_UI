@@ -2,6 +2,7 @@
 local MacUI = {}
 
 local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -10,6 +11,20 @@ local LocalPlayer = Players.LocalPlayer
 
 local ConfigFolder = "MacUI_Configs"
 local SavedConfigs = {}
+
+local function getSafeParent()
+    local parent = CoreGui
+    local ok, gethui = pcall(function() return gethui end)
+    if ok and type(gethui) == "function" then
+        local gui = gethui()
+        if typeof(gui) == "Instance" then parent = gui end
+    end
+    return parent
+end
+local function protectGui(gui)
+    pcall(function() if syn and syn.protect_gui then syn.protect_gui(gui) end end)
+    pcall(function() if get_hidden_gui then get_hidden_gui(gui) end end)
+end
 
 local function create(class, props)
     local obj = Instance.new(class)
@@ -289,11 +304,12 @@ KeyServices.luarmor = {
 
 local function CreateLoadingScreen(config)
     local LoadingGui = create("ScreenGui", {
-        Parent = LocalPlayer:WaitForChild("PlayerGui"),
+        Parent = getSafeParent(),
         Name = "MacUI_Loading",
         ZIndexBehavior = Enum.ZIndexBehavior.Global,
         ResetOnSpawn = false
     })
+    protectGui(LoadingGui)
     
     local LoadingFrame = create("Frame", {
         Parent = LoadingGui,
@@ -363,11 +379,12 @@ local function CreateKeySystem(config, callback)
     local keyAccepted = false
     
     local KeyGui = create("ScreenGui", {
-        Parent = LocalPlayer:WaitForChild("PlayerGui"),
+        Parent = getSafeParent(),
         Name = "MacUI_KeySystem",
         ZIndexBehavior = Enum.ZIndexBehavior.Global,
         ResetOnSpawn = false
     })
+    protectGui(KeyGui
     
     local KeyFrame = create("Frame", {
         Parent = KeyGui,
@@ -606,11 +623,12 @@ function MacUI:Window(config)
     local ScreenGui
     
     ScreenGui = create("ScreenGui", {
-        Parent = LocalPlayer:WaitForChild("PlayerGui"),
+        Parent = getSafeParent(),
         Name = config.Name or "MacUI_" .. HttpService:GenerateGUID(false),
         ZIndexBehavior = Enum.ZIndexBehavior.Global,
         ResetOnSpawn = false
     })
+    protectGui(ScreenGui)
     
     if config.KeySystem then
         ScreenGui.Enabled = false
@@ -2829,17 +2847,18 @@ function MacUI:Notify(cfg)
     cfg = cfg or {}
     local window = cfg.Window
     
-    local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-    local notificationHolder = PlayerGui:FindFirstChild("MacUI_Notifications")
+    local SafeParent = getSafeParent()
+    local notificationHolder = SafeParent:FindFirstChild("MacUI_Notifications")
     if not notificationHolder then
         notificationHolder = create("ScreenGui", {
-            Parent = PlayerGui,
+            Parent = SafeParent,
             Name = "MacUI_Notifications",
             ZIndexBehavior = Enum.ZIndexBehavior.Global,
             ResetOnSpawn = false,
             Enabled = true,
             DisplayOrder = 9999
         })
+        protectGui(notificationHolder)
         
         local vertAlign = (window and window.NotifyFromBottom) and Enum.VerticalAlignment.Bottom or Enum.VerticalAlignment.Top
         
@@ -2864,7 +2883,8 @@ function MacUI:Notify(cfg)
         Parent = notificationHolder,
         Size = UDim2.new(0, 0, 0, 0),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BorderSizePixel = 0
+        BorderSizePixel = 0,
+        ZIndex = 999
     })
     create("UICorner", { Parent = notification, CornerRadius = UDim.new(0, 10) })
     create("UIStroke", { 
