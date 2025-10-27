@@ -17,7 +17,7 @@ MacUI is a UI library inspired by macOS. If you find any bugs, please report the
 ## 🚀 Installation
 
 ```lua
-local MacUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/qqqqd3783-collab/MacOS_UI/refs/heads/main/Main.lua"))()
+local MacUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zennakub123456789/Apple-Library/refs/heads/main/Main_Fixed_WithWhiteBorder.lua"))()
 ```
 
 ---
@@ -498,7 +498,7 @@ local Window = MacUI:Window({
 ## 🎯 Example
 
 ```lua
-local MacUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/qqqqd3783-collab/MacOS_UI/refs/heads/main/Main.lua"))()
+local MacUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zennakub123456789/Apple-Library/refs/heads/main/Main_Fixed_WithWhiteBorder.lua"))()
 
 local Window = MacUI:Window({
     Title = "My Amazing Script",
